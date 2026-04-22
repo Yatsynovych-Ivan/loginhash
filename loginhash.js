@@ -1,11 +1,11 @@
 import pg from 'pg';
 import dotenv from 'dotenv';
-import bcrypt from 'bcrypt'; // 1. Імпортуємо bcrypt
+import bcrypt from 'bcrypt'; 
 
 dotenv.config();
 
 const { Pool } = pg;
-const saltRounds = 10; // Складність хешування
+const saltRounds = 10; 
 
 if (!process.env.DB_URL) {
   console.error('❌ Помилка: DB_URL не знайдено в .env файлі!');
@@ -24,7 +24,7 @@ const initializeDatabase = async () => {
     CREATE TABLE IF NOT EXISTS my_tasks (
       id SERIAL PRIMARY KEY,
       title TEXT NOT NULL,
-      description TEXT, -- Тут ми будемо зберігати хеш
+      description TEXT, 
       priority INTEGER DEFAULT 1,
       is_done BOOLEAN DEFAULT false,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -42,7 +42,7 @@ const initializeDatabase = async () => {
 
 async function addTask(title, desc, priority) {
   try {
-    // 2. Хешуємо опис перед збереженням
+
     console.log('⏳ Хешування опису...');
     const hashedDesc = await bcrypt.hash(desc, saltRounds);
     
@@ -63,9 +63,9 @@ async function listTasks() {
 async function deleteTask(id) {
   const res = await pool.query('DELETE FROM my_tasks WHERE id = $1 RETURNING *', [id]);
   if (res.rows.length) {
-    console.log('🗑️ Видалено:', res.rows[0]);
+    console.log(' Видалено:', res.rows[0]);
   } else {
-    console.log('ℹ️ Запис з таким ID не знайдено.');
+    console.log(' Запис з таким ID не знайдено.');
   }
 }
 
@@ -80,7 +80,7 @@ async function deleteTask(id) {
         if (!args[0]) {
           console.log('Помилка: вкажіть назву завдання.');
         } else {
-          // Передаємо назву, опис (який захешується) та пріоритет
+          /
           await addTask(args[0], args[1] || 'default_secret', args[2] || 1);
         }
         break;
@@ -102,6 +102,6 @@ async function deleteTask(id) {
     console.error('❌ Помилка:', err.message);
   } finally {
     await pool.end();
-    console.log('🔌 З’єднання закрито');
+    console.log(' З’єднання закрито');
   }
 })();
